@@ -17,12 +17,23 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.example.umte_project.screens.TodoListScreen
 import com.example.umte_project.ui.theme.UMTE_projectTheme
 import com.example.umte_project.viewmodels.TodoListViewModel
+import org.koin.android.ext.koin.androidContext
+import org.koin.core.context.startKoin
 
 class MainActivity : ComponentActivity() {
     private val viewModel: TodoListViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        startKoin {
+            androidContext(this@MainActivity)
+            modules(
+                viewModelModule,
+                repositoryModule,
+                databaseModule
+            )
+        }
+
         enableEdgeToEdge()
         setContent {
             UMTE_projectTheme {
@@ -32,13 +43,7 @@ class MainActivity : ComponentActivity() {
                         modifier = Modifier.padding(innerPadding)
                     )
                 }
-
-                val todoListItems by viewModel.wholeTodoList.collectAsState()
-
-                TodoListScreen(
-                    items = todoListItems,
-                    onItemClick = { item -> viewModel.update(item) }
-                )
+                TodoListScreen()
             }
         }
     }

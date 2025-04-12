@@ -13,39 +13,26 @@ import androidx.compose.material3.Checkbox
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.umte_project.data.model.TodoListItem
-
-// In your Screen Composable:
-@Composable
-fun TodoListScreen(items: List<TodoListItem>, onItemClick: (TodoListItem) -> Unit) {
-    LazyColumn(modifier = Modifier.fillMaxSize()) {
-        items(items) { item ->
-            TodoListItemComposable(item = item, onItemClick = onItemClick)
-        }
-    }
-}
+import com.example.umte_project.viewmodels.TodoListViewModel
+import org.koin.androidx.compose.koinViewModel
+import com.example.umte_project.components.TodoItem
 
 @Composable
-fun TodoListItemComposable(item: TodoListItem, onItemClick: (TodoListItem) -> Unit) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp)
-            .clickable { onItemClick(item) },
-        elevation = CardDefaults.cardElevation(4.dp)
-    ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(text = item.title, style = MaterialTheme.typography.titleMedium)
-            item.description?.let {
-                Text(text = it, style = MaterialTheme.typography.bodySmall)
-            }
-            Checkbox(
-                checked = item.isCompleted,
-                onCheckedChange = { isChecked ->
-                    onItemClick(item.copy(isCompleted = isChecked))
-                }
+fun TodoListScreen(
+    viewModel: TodoListViewModel = koinViewModel()
+) {
+    val todoItems by viewModel.wholeTodoList.collectAsState()
+
+    LazyColumn {
+        items(todoItems) { item ->
+            TodoItem(
+                item = item,
+                onToggle = { viewModel.updateItem(item.copy(isCompleted = !item.isCompleted)) }
             )
         }
     }

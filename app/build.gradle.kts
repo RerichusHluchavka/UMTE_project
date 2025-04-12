@@ -1,7 +1,10 @@
 plugins {
+    id("com.google.devtools.ksp")
+
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+
 }
 
 android {
@@ -62,6 +65,7 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
 
     implementation("androidx.room:room-runtime:2.7.0")
+    ksp("androidx.room:room-compiler:2.7.0")
     implementation("androidx.room:room-ktx:2.7.0")
 
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.7")
@@ -72,5 +76,11 @@ dependencies {
     implementation("androidx.compose.foundation:foundation:1.7.8")
 
     implementation("androidx.activity:activity-ktx:1.10.1")
+
+    implementation("io.insert-koin:koin-android:4.0.2")
+    implementation("io.insert-koin:koin-androidx-compose:4.0.2")
+
+    implementation("com.squareup.retrofit2:retrofit:2.11.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.11.0")
 
 }
