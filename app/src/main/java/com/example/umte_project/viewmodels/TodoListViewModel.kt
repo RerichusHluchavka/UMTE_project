@@ -29,8 +29,14 @@ class TodoListViewModel (private val repository: TodoListRepository) : ViewModel
     }
 
     // Add new item
-    fun addItem(item: TodoListItem) = viewModelScope.launch {
-        repository.insert(item)
+    fun addItem(item: TodoListItem) {
+        viewModelScope.launch {
+            repository.insert(item)  // Pass to repository
+        }
+    }
+
+    fun toggleComplete(item: TodoListItem) = viewModelScope.launch {
+        repository.update(item.copy(isCompleted = !item.isCompleted))
     }
 
     // Update item
