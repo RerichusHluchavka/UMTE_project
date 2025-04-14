@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeContentPadding
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
@@ -26,21 +28,30 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.Alignment
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.TopAppBar
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.toSize
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NewTodoScreen(
     onSave: (title: String, description: String, priority: Int) -> Unit,
-    onCancel: () -> Unit
+    onCancel: () -> Unit,
+    onBack: () -> Unit
 ) {
     var title by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
@@ -50,105 +61,122 @@ fun NewTodoScreen(
 
 
     val priorities = listOf(0, 1, 2, 3, 4, 5)
-    var mTextFieldSize by remember { mutableStateOf(Size.Zero)}
+    var mTextFieldSize by remember { mutableStateOf(Size.Zero) }
 
     val icon = if (expanded)
         Icons.Filled.KeyboardArrowUp
     else
         Icons.Filled.KeyboardArrowDown
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        Text(
-            text = "New Todo Item",
-            style = MaterialTheme.typography.headlineMedium
-        )
-
-        // Title and Priority Row
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Todo Details") },
+                navigationIcon = {
+                    IconButton(onClick = onBack) {
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                    }
+                }
+            )
+        }
+    ) { padding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(top = 16.dp)
+                .safeContentPadding(),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // Title Field (takes 70% width)
-            OutlinedTextField(
-                value = title,
-                onValueChange = { title = it },
-                label = { Text("Title *") },
-                modifier = Modifier.weight(0.7f),
-                singleLine = true
+            Text(
+                text = "New Todo Item",
+                style = MaterialTheme.typography.headlineMedium
             )
 
-            // Priority Dropdown (takes 30% width)
-            Box(
-                modifier = Modifier.weight(0.3f),
-                contentAlignment = Alignment.Center
+            // Title and Priority Row
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Column {
-                    OutlinedTextField(
-                        value = priority.toString(),
-                        onValueChange = {},
-                        readOnly = true,
-                        trailingIcon = {
-                            Icon(icon,"contentDescription",
-                                Modifier.clickable { expanded = !expanded })
-                        },
-                        modifier = Modifier
-                            .width(100.dp)
-                            .onGloballyPositioned { coordinates ->
-                                // This value is used to assign to
-                                // the DropDown the same width
-                                mTextFieldSize = coordinates.size.toSize()
-                            },
-                    )
+                // Title Field (takes 70% width)
+                OutlinedTextField(
+                    value = title,
+                    onValueChange = { title = it },
+                    label = { Text("Title *") },
+                    modifier = Modifier.weight(0.7f),
+                    singleLine = true
+                )
 
-                    DropdownMenu(
-                        expanded = expanded,
-                        onDismissRequest = { expanded = false }
+                // Priority Dropdown (takes 30% width)
+                Box(
+                    modifier = Modifier
+                        .weight(0.3f)
+                        .padding(top = 8.dp),
+                    contentAlignment = Alignment.Center,
+
                     ) {
-                        priorities.forEach { level ->
-                            DropdownMenuItem(
-                                text = { Text("$level") },
-                                onClick = {
-                                    priority = level
-                                    expanded = false
-                                }
-                            )
+                    Column(
+                    ) {
+                        OutlinedTextField(
+                            value = priority.toString(),
+                            onValueChange = {},
+                            readOnly = true,
+                            trailingIcon = {
+                                Icon(
+                                    icon, "contentDescription",
+                                    Modifier.clickable { expanded = !expanded })
+                            },
+                            modifier = Modifier
+                                .width(100.dp)
+                                .onGloballyPositioned { coordinates ->
+                                    mTextFieldSize = coordinates.size.toSize()
+                                },
+                        )
+
+                        DropdownMenu(
+                            expanded = expanded,
+                            onDismissRequest = { expanded = false }
+                        ) {
+                            priorities.forEach { level ->
+                                DropdownMenuItem(
+                                    text = { Text("$level") },
+                                    onClick = {
+                                        priority = level
+                                        expanded = false
+                                    }
+                                )
+                            }
                         }
                     }
                 }
             }
-        }
 
-        // Description Field
-        OutlinedTextField(
-            value = description,
-            onValueChange = { description = it },
-            label = { Text("Description") },
-            modifier = Modifier
-                .fillMaxWidth()
-                .heightIn(min = 100.dp),
-            maxLines = 3
-        )
+            // Description Field
+            OutlinedTextField(
+                value = description,
+                onValueChange = { description = it },
+                label = { Text("Description") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(min = 100.dp),
+                maxLines = 3
+            )
 
-        // Action Buttons
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.End,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            TextButton(onClick = onCancel) {
-                Text("Cancel")
-            }
-            Spacer(modifier = Modifier.width(8.dp))
-            Button(
-                onClick = { onSave(title, description, priority) },
-                enabled = isSaveEnabled
+            // Action Buttons
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Text("Save")
+                TextButton(onClick = onCancel) {
+                    Text("Cancel")
+                }
+                Spacer(modifier = Modifier.width(8.dp))
+                Button(
+                    onClick = { onSave(title, description, priority) },
+                    enabled = isSaveEnabled
+                ) {
+                    Text("Save")
+                }
             }
         }
     }

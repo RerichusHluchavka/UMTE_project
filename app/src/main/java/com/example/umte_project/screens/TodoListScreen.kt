@@ -3,9 +3,11 @@ package com.example.umte_project.screens
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeContentPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -37,15 +39,35 @@ fun TodoListScreen(
 ) {
     val todoItems by viewModel.wholeTodoList.collectAsState()
     var showNewTodoScreen by remember { mutableStateOf(false) }
+    var selectedItem by remember { mutableStateOf<TodoListItem?>(null) }
 
+
+    selectedItem?.let { item ->
+        TodoDetailScreen(
+            item = item,
+            onBack = { selectedItem = null },
+            onSave = { updatedItem ->
+                viewModel.updateItem(updatedItem)
+                selectedItem = null
+            }
+        )
+        return
+    }
 
     if (showNewTodoScreen) {
         NewTodoScreen(
             onSave = { title, description, priority ->
-                viewModel.addItem(TodoListItem(title = title, description = description, priority = priority))
+                viewModel.addItem(
+                    TodoListItem(
+                        title = title,
+                        description = description,
+                        priority = priority
+                    )
+                )
                 showNewTodoScreen = false
             },
-            onCancel = { showNewTodoScreen = false }
+            onCancel = { showNewTodoScreen = false },
+            onBack = {showNewTodoScreen = false}
         )
     } else {
         Scaffold(
@@ -57,17 +79,22 @@ fun TodoListScreen(
                 }
             }
         ) { padding ->
-            LazyColumn(
-                contentPadding = padding,
-                modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+            Column(
+                Modifier.safeContentPadding()
             ) {
-                items(todoItems) { item ->
-                    TodoItemCard(
-                        item = item,
-                        onToggleComplete = { viewModel.toggleComplete(item) },
-                        onDelete = { viewModel.deleteItem(item) }
-                    )
+                LazyColumn(
+                    contentPadding = padding,
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    items(todoItems) { item ->
+                        TodoItemCard(
+                            item = item,
+                            onToggleComplete = { viewModel.toggleComplete(item) },
+                            onDelete = { viewModel.deleteItem(item) },
+                            onClick = { selectedItem = item }
+                        )
+                    }
                 }
             }
         }

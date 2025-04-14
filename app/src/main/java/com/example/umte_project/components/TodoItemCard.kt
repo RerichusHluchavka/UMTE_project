@@ -2,6 +2,7 @@ package com.example.umte_project.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -33,12 +34,14 @@ import com.example.umte_project.data.model.TodoListItem
 fun TodoItemCard(
     item: TodoListItem,
     onToggleComplete: () -> Unit,
-    onDelete: () -> Unit
+    onDelete: () -> Unit,
+    onClick: () -> Unit
 ) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 8.dp),
+            .padding(horizontal = 8.dp)
+            .clickable(onClick = onClick),
         elevation = CardDefaults.cardElevation(4.dp)
     ) {
         Row(
