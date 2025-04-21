@@ -18,4 +18,10 @@ class TodoListRepositoryImpl (private val todoListDao: TodoListDao):TodoListRepo
     override suspend fun update(todoListItem: TodoListItem) {
         todoListDao.update(todoListItem)
     }
+
+
+    override suspend fun getAllTodosOnce(): List<TodoListItem> {
+        return todoListDao.getWholeListOnce()
+    }
+
 }

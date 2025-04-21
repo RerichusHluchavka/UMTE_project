@@ -1,6 +1,5 @@
 package com.example.umte_project.screens
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeContentPadding
-import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
@@ -28,23 +26,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.Alignment
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material.icons.filled.Done
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
-import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBar
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.unit.toSize
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -73,7 +68,7 @@ fun NewTodoScreen(
                 title = { Text("Todo Details") },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
                 }
             )
@@ -108,37 +103,35 @@ fun NewTodoScreen(
 
                 // Priority Dropdown (takes 30% width)
                 Box(
-                    modifier = Modifier
-                        .weight(0.3f)
-                        .padding(top = 8.dp),
-                    contentAlignment = Alignment.Center,
-
-                    ) {
-                    Column(
+                    modifier = Modifier.weight(0.3f),
+                    contentAlignment = Alignment.Center
+                ) {
+                    ExposedDropdownMenuBox(
+                        expanded = expanded,
+                        onExpandedChange = { expanded = it },
+                        modifier = Modifier.width(100.dp)
                     ) {
                         OutlinedTextField(
+                            modifier = Modifier
+                                .menuAnchor(MenuAnchorType.PrimaryEditable)
+                                .fillMaxWidth(),
                             value = priority.toString(),
                             onValueChange = {},
                             readOnly = true,
+                            label = { Text("Priority") },
                             trailingIcon = {
-                                Icon(
-                                    icon, "contentDescription",
-                                    Modifier.clickable { expanded = !expanded })
+                                ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
                             },
-                            modifier = Modifier
-                                .width(100.dp)
-                                .onGloballyPositioned { coordinates ->
-                                    mTextFieldSize = coordinates.size.toSize()
-                                },
+                            colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors()
                         )
 
-                        DropdownMenu(
+                        ExposedDropdownMenu(
                             expanded = expanded,
                             onDismissRequest = { expanded = false }
                         ) {
                             priorities.forEach { level ->
                                 DropdownMenuItem(
-                                    text = { Text("$level") },
+                                    text = { Text(level.toString()) },
                                     onClick = {
                                         priority = level
                                         expanded = false

@@ -1,25 +1,22 @@
 package com.example.umte_project.screens
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeContentPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Checkbox
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -33,9 +30,12 @@ import com.example.umte_project.viewmodels.TodoListViewModel
 import org.koin.androidx.compose.koinViewModel
 import com.example.umte_project.components.TodoItemCard
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TodoListScreen(
-    viewModel: TodoListViewModel = koinViewModel()
+    viewModel: TodoListViewModel = koinViewModel(),
+    onNavigateToHighPriority: () -> Unit,
+    onNavigateToSettings: () -> Unit
 ) {
     val todoItems by viewModel.wholeTodoList.collectAsState()
     var showNewTodoScreen by remember { mutableStateOf(false) }
@@ -67,10 +67,30 @@ fun TodoListScreen(
                 showNewTodoScreen = false
             },
             onCancel = { showNewTodoScreen = false },
-            onBack = {showNewTodoScreen = false}
+            onBack = { showNewTodoScreen = false }
         )
     } else {
         Scaffold(
+            topBar = {
+                TopAppBar(
+                    title = { Text("My Todo List") },
+                    actions = {
+                        IconButton(onClick = onNavigateToHighPriority) {
+                            Icon(
+                                imageVector = Icons.Filled.Warning,
+                                contentDescription = "High Priority Tasks"
+                            )
+                        }
+                        IconButton(onClick = onNavigateToSettings) {
+                            Icon(
+                                imageVector = Icons.Filled.Settings,
+                                contentDescription = "High Priority Tasks"
+                            )
+                        }
+                    }
+                )
+            },
+
             floatingActionButton = {
                 FloatingActionButton(
                     onClick = { showNewTodoScreen = true }
@@ -78,6 +98,7 @@ fun TodoListScreen(
                     Icon(Icons.Default.Add, contentDescription = "Add")
                 }
             }
+
         ) { padding ->
             Column(
                 Modifier.safeContentPadding()

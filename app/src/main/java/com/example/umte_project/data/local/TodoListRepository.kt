@@ -8,5 +8,7 @@ interface TodoListRepository {
 
     suspend fun insert(todoListItem: TodoListItem)
     suspend fun update(todoListItem: TodoListItem)
-    suspend fun  delete(todoListItem: TodoListItem)
+    suspend fun delete(todoListItem: TodoListItem)
+    suspend fun getAllTodosOnce(): List<TodoListItem>
+
 }

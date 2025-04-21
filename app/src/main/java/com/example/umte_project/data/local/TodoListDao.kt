@@ -15,6 +15,16 @@ interface TodoListDao {
     @Delete
     suspend fun delete(todo: TodoListItem)
 
-    @Query("SELECT * FROM todo_list ORDER BY createdAt DESC")
+    @Query(
+        """
+    SELECT * FROM todo_list 
+    ORDER BY 
+        CASE WHEN isCompleted = 0 THEN 0 ELSE 1 END,  
+        createdAt DESC                               
+"""
+    )
     fun getWholeList(): Flow<List<TodoListItem>>
+
+    @Query("SELECT * FROM todo_list WHERE isCompleted = 0 ORDER BY createdAt DESC")
+    fun getWholeListOnce(): List<TodoListItem>
 }
