@@ -65,14 +65,10 @@ fun SettingsScreen(
     val mediumPriorityInterval by viewModel.mediumPriorityInterval.collectAsState()
     val lowPriorityInterval by viewModel.lowPriorityInterval.collectAsState()
 
-    var highInput by remember { mutableStateOf(highPriorityInterval.toString()) }
-    var mediumInput by remember { mutableStateOf(mediumPriorityInterval.toString()) }
-    var lowInput by remember { mutableStateOf(lowPriorityInterval.toString()) }
+    var highInput by remember { mutableStateOf("") }
+    var mediumInput by remember { mutableStateOf("") }
+    var lowInput by remember { mutableStateOf("") }
 
-    highInput = highPriorityInterval.toString()
-    mediumInput = mediumPriorityInterval.toString()
-    lowInput = lowPriorityInterval.toString()
-    ;
     Scaffold(
         topBar = {
             TopAppBar(
@@ -98,6 +94,7 @@ fun SettingsScreen(
                     highInput = it
                     it.toIntOrNull()?.let { min -> viewModel.setHighPriorityInterval(min) }
                 },
+                placeholder = { Text("$highPriorityInterval") },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth()
@@ -114,6 +111,7 @@ fun SettingsScreen(
                     mediumInput = it
                     it.toIntOrNull()?.let { min -> viewModel.setMediumPriorityInterval(min) }
                 },
+                placeholder = { Text("$mediumPriorityInterval") },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth()
@@ -130,6 +128,7 @@ fun SettingsScreen(
                     lowInput = it
                     it.toIntOrNull()?.let { min -> viewModel.setLowPriorityInterval(min) }
                 },
+                placeholder = { Text("$lowPriorityInterval") },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth()

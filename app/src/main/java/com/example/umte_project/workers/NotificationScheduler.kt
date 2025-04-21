@@ -7,20 +7,29 @@ import java.util.concurrent.TimeUnit
 import androidx.work.PeriodicWorkRequestBuilder
 import com.example.umte_project.data.local.SettingsRepository
 import kotlinx.coroutines.flow.first
+import android.util.Log
 
 class NotificationScheduler(
     private val context: Context,
     private val settingsRepository: SettingsRepository
 ) {
-
-    suspend fun schedulePeriodicNotifications() {
+/*
+    suspend fun cancelExisting(){
         val workManager = WorkManager.getInstance(context)
 
-        // Cancel any existing work
         workManager.cancelAllWorkByTag("high_priority_todos")
         workManager.cancelAllWorkByTag("medium_priority_todos")
         workManager.cancelAllWorkByTag("low_priority_todos")
+    }
+*/
+    suspend fun schedulePeriodicNotifications() {
+        val workManager = WorkManager.getInstance(context)
 
+        Log.wtf("TAG", "cancel culture")
+
+        workManager.cancelAllWorkByTag("high_priority_todos")
+        workManager.cancelAllWorkByTag("medium_priority_todos")
+        workManager.cancelAllWorkByTag("low_priority_todos")
 
         val highPriorityInterval = settingsRepository.highPriorityInterval.first()
         val mediumPriorityInterval = settingsRepository.mediumPriorityInterval.first()

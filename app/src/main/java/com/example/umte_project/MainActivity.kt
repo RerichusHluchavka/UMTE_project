@@ -1,5 +1,6 @@
 package com.example.umte_project
 
+import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -44,8 +45,11 @@ class MainActivity : ComponentActivity() {
 
         NotificationHelper(this).createNotificationChannel()
 
-        lifecycleScope.launch {
-            notificationScheduler.schedulePeriodicNotifications()
+
+        if (isFirstLaunch(this)) {
+            lifecycleScope.launch {
+                notificationScheduler.schedulePeriodicNotifications()
+            }
         }
 
         enableEdgeToEdge()
@@ -53,6 +57,16 @@ class MainActivity : ComponentActivity() {
             UMTE_projectTheme {
                 TodoApp()
             }
+        }
+    }
+
+    fun isFirstLaunch(context: Context): Boolean {
+        val prefs = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+        return if (prefs.getBoolean("first_launch", true)) {
+            prefs.edit().putBoolean("first_launch", false).apply()
+            true
+        } else {
+            false
         }
     }
 }
@@ -71,3 +85,4 @@ fun TodoAppPreview() {
         TodoApp()
     }
 }
+
