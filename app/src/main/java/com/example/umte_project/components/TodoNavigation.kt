@@ -1,4 +1,4 @@
-package com.example.umte_project.navigation
+package com.example.umte_project.components
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost

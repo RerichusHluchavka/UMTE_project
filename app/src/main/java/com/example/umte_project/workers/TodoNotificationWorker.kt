@@ -20,19 +20,22 @@ class TodoNotificationWorker(
     override fun doWork(): Result {
         val todos = runBlocking { repository.getAllTodosOnce() }
 
+        val notificationPriority = inputData.getString("priority") ?: "low"
+
         val highPriority = todos.filter { it.priority == 5 }
         val mediumPriority = todos.filter { it.priority in 3..4 }
         val lowPriority = todos.filter { it.priority in 1..2 }
 
-        if (highPriority.isNotEmpty()) {
+
+        if (highPriority.isNotEmpty() && notificationPriority == "high") {
             showPriorityNotification(highPriority, "High Priority Tasks")
         }
 
-        if (mediumPriority.isNotEmpty()) {
+        if (mediumPriority.isNotEmpty() && notificationPriority == "medium") {
             showPriorityNotification(mediumPriority, "Medium Priority Tasks")
         }
 
-        if (lowPriority.isNotEmpty()) {
+        if (lowPriority.isNotEmpty() && notificationPriority == "low") {
             showPriorityNotification(lowPriority, "Low Priority Tasks")
         }
 

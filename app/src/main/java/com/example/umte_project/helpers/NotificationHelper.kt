@@ -26,6 +26,8 @@ class NotificationHelper(private val context: Context) {
     }
 
     fun showNotification(title: String, content: String) {
+        createNotificationChannel()
+        
         val notification = NotificationCompat.Builder(context, "todo_channel")
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setContentTitle(title)

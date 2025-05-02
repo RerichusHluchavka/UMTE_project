@@ -6,7 +6,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.umte_project.data.local.SettingsRepository
-import com.example.umte_project.workers.NotificationScheduler
+import com.example.umte_project.helpers.NotificationSchedulerHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -86,12 +86,10 @@ class SettingsViewModel(
                     settingsRepository.setNotificationInterval("low_priority", lowPriorityInterval.value)
                 }
 
-                // Wait for all saves to complete
                 awaitAll(saveHigh, saveMedium, saveLow)
 
-                // 2. Update notifications with proper context
                 withContext(Dispatchers.IO) {
-                    NotificationScheduler(application, settingsRepository).schedulePeriodicNotifications()
+                    NotificationSchedulerHelper(application, settingsRepository).schedulePeriodicNotifications()
                 }
 
 

@@ -8,7 +8,7 @@ import com.example.umte_project.data.local.TodoListRepository
 import com.example.umte_project.data.local.TodoListRepositoryImpl
 import com.example.umte_project.viewmodels.SettingsViewModel
 import com.example.umte_project.viewmodels.TodoListViewModel
-import com.example.umte_project.workers.NotificationScheduler
+import com.example.umte_project.helpers.NotificationSchedulerHelper
 import com.example.umte_project.workers.TodoNotificationWorker
 import org.koin.dsl.module
 import org.koin.android.ext.koin.androidContext
@@ -59,7 +59,7 @@ val workerModule = module {
 
 val notificationModule = module {
     single {
-        NotificationScheduler(get(), get())
+        NotificationSchedulerHelper(get(), get())
     }
 }
 

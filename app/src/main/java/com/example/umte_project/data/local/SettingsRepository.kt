@@ -10,7 +10,6 @@ class SettingsRepository(private val dataStore: DataStore<Preferences>) {
         val HIGH_PRIORITY_INTERVAL = intPreferencesKey("high_priority_interval")
         val MEDIUM_PRIORITY_INTERVAL = intPreferencesKey("medium_priority_interval")
         val LOW_PRIORITY_INTERVAL = intPreferencesKey("low_priority_interval")
-
     }
 
     suspend fun setNotificationInterval(priority: String, minutes: Int) {
